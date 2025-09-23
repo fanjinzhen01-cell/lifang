@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我们的时光印记</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        :root {
+            --primary: #e84393;
+            --secondary: #fd79a8;
+            --accent: #fab1a0;
+            --text: #2d3436;
+            --light: #fff9fb;
+            --dark: #636e72;
+        }
+        
+        body {
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 50%, #fd79a8 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            padding: 25px 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            z-index: -1;
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 10%;
+            width: 80%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            border-radius: 3px;
+        }
+        
+        .couple-names {
+            font-size: 1.4rem;
+            color: var(--text);
+            margin-bottom: 20px;
+            font-weight: 500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .heart-divider {
+            color: var(--primary);
+            animation: pulse 2s infinite;
+        }
+        
+        .date-info {
+            font-size: 1rem;
+            color: var(--dark);
+            margin-bottom: 25px;
+            opacity: 0.8;
+        }
+        
+        .timer {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            gap: 8px;
+            perspective: 1000px;
+        }
+        
+        .time-unit {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.4));
+            border-radius: 15px;
+            padding: 12px 5px;
+            flex: 1;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            min-width: 0;
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .time-unit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .time-unit:hover::before {
+            left: 100%;
+        }
+        
+        .time-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            line-height: 1.2;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .time-label {
+            font-size: 0.8rem;
+            color: var(--dark);
+            margin-top: 3px;
+            opacity: 0.8;
+            letter-spacing: 0.5px;
+        }
+        
+        .message {
+            font-size: 1.1rem;
+            color: var(--text);
+            margin-top: 20px;
+            line-height: 1.5;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10px;
+            font-style: italic;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 15px;
+            padding: 15px;
+            border-left: 3px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .message::before {
+            content: '"';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 3rem;
+            color: rgba(232, 67, 147, 0.2);
+            font-family: serif;
+        }
+        
+        .message::after {
+            content: '"';
+            position: absolute;
+            bottom: -15px;
+            right: 10px;
+            font-size: 3rem;
+            color: rgba(232, 67, 147, 0.2);
+            font-family: serif;
+        }
+        
+        .love-button {
+            background: linear-gradient(145deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 50px;
+            color: white;
+            padding: 12px 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(232, 67, 147, 0.3);
+            width: 80%;
+            font-weight: 500;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .love-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .love-button:hover::before {
+            left: 100%;
+        }
+        
+        .love-button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 8px rgba(232, 67, 147, 0.3);
+        }
+        
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .floating-element {
+            position: absolute;
+            opacity: 0.7;
+            animation: float 8s infinite ease-in-out;
+        }
+        
+        .floating-element.heart {
+            color: var(--primary);
+            font-size: 20px;
+        }
+        
+        .floating-element.star {
+            color: #ffeaa7;
+            font-size: 15px;
+        }
+        
+        .floating-element.circle {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.7; }
+        }
+        
+        .settings-panel {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 20;
+        }
+        
+        .settings-btn {
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+            color: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s;
+        }
+        
+        .settings-btn:hover {
+            transform: rotate(90deg);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 320px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: modalAppear 0.3s;
+        }
+        
+        @keyframes modalAppear {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .modal h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            transition: border 0.3s;
+        }
+        
+        .input-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            flex: 1;
+            transition: all 0.3s;
+        }
+        
+        .save-btn {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .save-btn:hover {
+            background: var(--secondary);
+        }
+        
+        .cancel-btn {
+            background: #f0f0f0;
+            color: var(--text);
+        }
+        
+        .cancel-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .special-date {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--text);
+            opacity: 0.7;
+        }
+        
+        .anniversary {
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .memory-highlight {
+            background: linear-gradient(120deg, #fd79a8 0%, #fd79a8 100%);
+            background-repeat: no-repeat;
+            background-size: 100% 0.4em;
+            background-position: 0 88%;
+            transition: background-size 0.25s ease-in;
+        }
+        
+        .progress-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120%;
+            height: 120%;
+            z-index: -1;
+            opacity: 0.05;
+        }
+        
+        .progress-ring circle {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 2;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: progress 20s linear infinite;
+        }
+        
+        @keyframes progress {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        .photo-frame {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            background: linear-gradient(145deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .photo-frame::before {
+            content: '';
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: white;
+            z-index: 1;
+        }
+        
+        .photo-frame i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            z-index: 2;
+            position: relative;
+        }
+        
+        .milestone {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: var(--dark);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <!-- 设置按钮 -->
+    <div class="settings-panel">
+        <button class="settings-btn" onclick="openSettings()">
+            <i class="fas fa-cog"></i>
+        </button>
+    </div>
+    
+    <!-- 浮动元素背景 -->
+    <div class="floating-elements" id="floatingElements"></div>
+    
+    <!-- 进度环 -->
+    <svg class="progress-ring">
+        <circle cx="50%" cy="50%" r="48%"></circle>
+    </svg>
+    
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 照片框 -->
+        <div class="photo-frame">
+            <i class="fas fa-heart"></i>
+        </div>
+        
+        <h1><i class="fas fa-heart" style="color: var(--primary); margin-right: 10px;"></i>时光印记<i class="fas fa-heart" style="color: var(--primary); margin-left: 10px;"></i></h1>
+        
+        <div class="couple-names">
+            <span id="name1">张三</span>
+            <span class="heart-divider"><i class="fas fa-heart"></i></span>
+            <span id="name2">李四</span>
+        </div>
+        
+        <div class="date-info">
+            从 <span id="startDate" class="memory-highlight">2020-01-01</span> 相识
+        </div>
+        
+        <div class="timer">
+            <div class="time-unit">
+                <div class="time-value" id="days">0</div>
+                <div class="time-label">天</div>
+            </div>
+            <div class="time-unit">
+                <div class="time-value" id="hours">0</div>
+                <div class="time-label">小时</div>
+            </div>
+            <div class="time-unit">
+                <div class="time-value" id="minutes">0</div>
+                <div class="time-label">分钟</div>
+            </div>
+            <div class="time-unit">
+                <div class="time-value" id="seconds">0</div>
+                <div class="time-label">秒</div>
+            </div>
+        </div>
+        
+        <div class="message" id="loveMessage">与你相遇，是我此生最美的意外</div>
+        
+        <button class="love-button" onclick="showLoveMessage()">
+            <i class="fas fa-heart" style="margin-right: 8px;"></i>爱的告白
+        </button>
+        
+        <div class="special-date">
+            今天是我们相识的第 <span id="totalDays" class="anniversary">0</span> 天
+        </div>
+        
+        <div class="milestone" id="milestone"></div>
+    </div>
+    
+    <!-- 设置模态框 -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-user-edit" style="margin-right: 10px;"></i>个性化设置</h2>
+            <div class="input-group">
+                <label for="name1Input"><i class="fas fa-user" style="margin-right: 5px;"></i>你的名字</label>
+                <input type="text" id="name1Input" placeholder="输入你的名字">
+            </div>
+            <div class="input-group">
+                <label for="name2Input"><i class="fas fa-user-friends" style="margin-right: 5px;"></i>TA的名字</label>
+                <input type="text" id="name2Input" placeholder="输入TA的名字">
+            </div>
+            <div class="input-group">
+                <label for="startDateInput"><i class="far fa-calendar-alt" style="margin-right: 5px;"></i>相识日期</label>
+                <input type="date" id="startDateInput">
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel-btn" onclick="closeSettings()">取消</button>
+                <button class="modal-btn save-btn" onclick="saveSettings()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 默认设置
+        let settings = {
+            name1: "张三",
+            name2: "李四",
+            startDate: "2020-01-01"
+        };
+        
+        // 从本地存储加载设置
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('loveTimerSettings');
+            if (savedSettings) {
+                settings = JSON.parse(savedSettings);
+            }
+            applySettings();
+        }
+        
+        // 应用设置到页面
+        function applySettings() {
+            document.getElementById('name1').textContent = settings.name1;
+            document.getElementById('name2').textContent = settings.name2;
+            document.getElementById('startDate').textContent = settings.startDate;
+            document.getElementById('name1Input').value = settings.name1;
+            document.getElementById('name2Input').value = settings.name2;
+            document.getElementById('startDateInput').value = settings.startDate;
+        }
+        
+        // 保存设置到本地存储
+        function saveSettings() {
+            settings.name1 = document.getElementById('name1Input').value || "张三";
+            settings.name2 = document.getElementById('name2Input').value || "李四";
+            settings.startDate = document.getElementById('startDateInput').value || "2020-01-01";
+            
+            localStorage.setItem('loveTimerSettings', JSON.stringify(settings));
+            applySettings();
+            closeSettings();
+            
+            // 重新开始计时
+            startDate = new Date(settings.startDate);
+            updateTimer();
+        }
+        
+        // 打开设置模态框
+        function openSettings() {
+            document.getElementById('settingsModal').style.display = 'flex';
+        }
+        
+        // 关闭设置模态框
+        function closeSettings() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+        
+        // 设置开始日期
+        let startDate = new Date(settings.startDate);
+        
+        // 更新计时器和里程碑
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - startDate;
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            document.getElementById('totalDays').textContent = days;
+            
+            // 更新里程碑
+            updateMilestone(days);
+        }
+        
+        // 更新里程碑信息
+        function updateMilestone(days) {
+            const milestones = [
+                {days: 7, text: "刚刚度过甜蜜的第一周"},
+                {days: 30, text: "已经相伴一个月啦"},
+                {days: 100, text: "百日纪念，爱意更浓"},
+                {days: 365, text: "一周年快乐！"},
+                {days: 500, text: "五百个日夜的陪伴"},
+                {days: 730, text: "两周年，爱如初见"},
+                {days: 1000, text: "千日之恋，珍贵如金"}
+            ];
+            
+            let milestoneText = "";
+            for (let i = milestones.length - 1; i >= 0; i--) {
+                if (days >= milestones[i].days) {
+                    milestoneText = milestones[i].text;
+                    break;
+                }
+            }
+            
+            document.getElementById('milestone').textContent = milestoneText;
+        }
+        
+        // 创建浮动元素
+        function createFloatingElements() {
+            const elementsContainer = document.getElementById('floatingElements');
+            
+            for (let i = 0; i < 20; i++) {
+                const element = document.createElement('div');
+                const types = ['heart', 'star', 'circle'];
+                const type = types[Math.floor(Math.random() * types.length)];
+                
+                element.className = `floating-element ${type}`;
+                
+                if (type === 'heart') {
+                    element.innerHTML = '<i class="fas fa-heart"></i>';
+                } else if (type === 'star') {
+                    element.innerHTML = '<i class="fas fa-star"></i>';
+                }
+                
+                element.style.left = Math.random() * 100 + 'vw';
+                element.style.animationDelay = Math.random() * 8 + 's';
+                element.style.fontSize = (Math.random() * 15 + 10) + 'px';
+                elementsContainer.appendChild(element);
+            }
+        }
+        
+        // 显示爱意消息
+        function showLoveMessage() {
+            const messages = [
+                "与你相遇，是我此生最美的意外",
+                "爱你是我做过最正确的决定",
+                "我们的故事，是我最珍贵的宝藏",
+                "你是我平淡岁月里的星辰大海",
+                "每一天都比前一天更爱你",
+                "有你的日子，连空气都是甜的",
+                "我们的爱情，如这时光般永恒",
+                "你是我心中最柔软的存在",
+                "感谢命运让我们相遇相知",
+                "爱你，是我此生不变的誓言",
+                "与你共度的每一秒都弥足珍贵",
+                "你是我生命中最美的风景",
+                "愿时光慢行，许我们一生深情",
+                "你的名字，是我写过最短的情诗",
+                "世界很大，我的眼里只有你"
+            ];
+            
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            document.getElementById('loveMessage').textContent = randomMessage;
+            
+            // 添加一些额外的动画效果
+            const container = document.querySelector('.container');
+            container.style.transform = 'scale(1.02)';
+            setTimeout(() => {
+                container.style.transform = 'scale(1)';
+            }, 300);
+            
+            // 添加一些浮动元素
+            addFloatingElements();
+        }
+        
+        // 添加浮动元素
+        function addFloatingElements() {
+            const elementsContainer = document.getElementById('floatingElements');
+            for (let i = 0; i < 5; i++) {
+                const element = document.createElement('div');
+                element.className = 'floating-element heart';
+                element.innerHTML = '<i class="fas fa-heart"></i>';
+                element.style.left = (Math.random() * 60 + 20) + 'vw';
+                element.style.animation = 'float 5s ease-in-out';
+                element.style.fontSize = (Math.random() * 15 + 15) + 'px';
+                elementsContainer.appendChild(element);
+                
+                // 动画结束后移除元素
+                setTimeout(() => {
+                    if (element.parentNode) {
+                        element.parentNode.removeChild(element);
+                    }
+                }, 5000);
+            }
+        }
+        
+        // 初始化
+        function init() {
+            loadSettings();
+            startDate = new Date(settings.startDate);
+            updateTimer();
+            setInterval(updateTimer, 1000);
+            createFloatingElements();
+        }
+        
+        // 页面加载完成后初始化
+        window.onload = init;
+        
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('settingsModal');
+            if (event.target == modal) {
+                closeSettings();
+            }
+        }
+    </script>
+</body>
+</html>
